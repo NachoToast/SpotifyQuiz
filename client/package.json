@@ -19,7 +19,7 @@
         "typecheck": "tsc --noEmit",
         "check-all": "yarn lint && yarn typecheck"
     },
-    "dependencies": {
+    "devDependencies": {
         "@reduxjs/toolkit": "^1.8.5",
         "@types/node": "^16.7.13",
         "@types/react": "^18.0.0",
