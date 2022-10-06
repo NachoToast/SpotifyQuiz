@@ -1,6 +1,6 @@
 {
     "rules": {
-        "no-unused-vars": "error",
+        "no-unused-vars": "warn",
         "linebreak-style": "off",
         "quotes": ["error", "single", { "avoidEscape": true }],
         "semi": "off",
