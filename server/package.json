@@ -1,6 +1,7 @@
 {
     "name": "spotify-quiz-server",
     "version": "0.1.0",
+    "private": true,
     "main": "build/index.js",
     "license": "MIT",
     "author": {
