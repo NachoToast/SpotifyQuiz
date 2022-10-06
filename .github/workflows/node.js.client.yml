@@ -7,9 +7,11 @@ on:
   push:
     paths:
       - client/**
+      - shared/**
   pull_request:
     paths:
       - client/**
+      - shared/**
 
 defaults:
   run:

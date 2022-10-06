@@ -11,7 +11,17 @@
 #
 name: "CodeQL"
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - client/**
+      - server/**
+      - shared/**
+  pull_request:
+    paths:
+      - client/**
+      - server/**
+      - shared/**
 
 jobs:
   analyze:
