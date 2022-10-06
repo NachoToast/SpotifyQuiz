@@ -9,20 +9,20 @@ export default rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     skip: (req, res) => {
-        const token = req.get(`RateLimit-Bypass-Token`);
+        const token = req.get('RateLimit-Bypass-Token');
         if (token === undefined) return false;
 
-        if (typeof token !== `string`) {
-            res.setHeader(`RateLimit-Bypass-Response`, `Expected string, got '${typeof token}'`);
+        if (typeof token !== 'string') {
+            res.setHeader('RateLimit-Bypass-Response', `Expected string, got '${typeof token}'`);
             return false;
         }
 
         if (!bypassTokens.has(token)) {
-            res.setHeader(`RateLimit-Bypass-Response`, `Invalid`);
+            res.setHeader('RateLimit-Bypass-Response', 'Invalid');
             return false;
         }
 
-        res.setHeader(`RateLimit-Bypass-Response`, `Valid`);
+        res.setHeader('RateLimit-Bypass-Response', 'Valid');
         return true;
     },
 });

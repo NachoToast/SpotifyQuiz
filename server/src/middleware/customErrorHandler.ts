@@ -6,7 +6,7 @@ const customErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
     }
 
     res.status(err.status || 500).json({
-        message: err.message ?? `Unknown error occurred`,
+        message: err.message ?? 'Unknown error occurred',
         errors: err.errors,
     });
 };

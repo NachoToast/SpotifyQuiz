@@ -60,10 +60,10 @@ export interface Config {
     startedAt: string;
 }
 
-const config: Config = existsSync(`config.json`) ? require(`../config.json`) : require(`../config.example.json`);
+const config: Config = existsSync('config.json') ? require('../config.json') : require('../config.example.json');
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-config.version = process.env.NPM_VERSION || require(`../package.json`).version;
+config.version = process.env.NPM_VERSION || require('../package.json').version;
 
 config.startedAt = new Date().toISOString();
 
