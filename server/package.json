@@ -14,8 +14,8 @@
         "directory": "server"
     },
     "scripts": {
-        "build": "tsc -p tsconfig.build.json",
         "start": "nodemon src/index.ts",
+        "build": "tsc -p tsconfig.build.json",
         "lint": "eslint --ext .ts src --max-warnings=0",
         "typecheck": "tsc -p tsconfig.build.json --noEmit",
         "check-all": "yarn lint && yarn typecheck",
