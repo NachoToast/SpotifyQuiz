@@ -24,7 +24,7 @@ const spotifyAuth: RequestHandler = async (req, res) => {
     if (typeof code === 'string') {
         body.set('grant_type', 'authorization_code');
         body.set('code', code);
-        body.set('redirect_uri', origin);
+        body.set('redirect_uri', origin + '/login');
     } else if (typeof refreshToken === 'string') {
         body.set('grant_type', 'refresh_token');
         body.set('refresh_token', refreshToken);
