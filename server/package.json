@@ -10,7 +10,8 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/NachoToast/SpotifyQuiz.git"
+        "url": "https://github.com/NachoToast/SpotifyQuiz.git",
+        "directory": "server"
     },
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
