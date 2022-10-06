@@ -1,0 +1,48 @@
+{
+    "name": "spotify-quiz-client",
+    "version": "0.1.0",
+    "private": true,
+    "license": "MIT",
+    "author": {
+        "name": "NachoToast",
+        "url": "https://github.com/NachoToast"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NachoToast/SpotifyQuiz.git",
+        "directory": "client"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "lint": "eslint --ext .ts --ext .tsx src --max-warnings=0",
+        "typecheck": "tsc --noEmit",
+        "check-all": "yarn lint && yarn typecheck"
+    },
+    "dependencies": {
+        "@types/node": "^16.7.13",
+        "@types/react": "^18.0.0",
+        "@types/react-dom": "^18.0.0",
+        "@typescript-eslint/eslint-plugin": "^5.39.0",
+        "@typescript-eslint/parser": "^5.39.0",
+        "eslint": "^8.24.0",
+        "eslint-config-prettier": "^8.5.0",
+        "prettier": "^2.7.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-scripts": "5.0.1",
+        "typescript": "^4.4.2"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}
