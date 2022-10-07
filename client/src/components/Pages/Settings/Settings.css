@@ -1,3 +1,9 @@
+div.settingsSection {
+    display: flex;
+    flex-flow: row nowrap;
+    margin: 0.3em;
+}
+
 input.settingsInput {
     font: inherit;
     outline: none;
@@ -34,4 +40,16 @@ button.settingsResetButton:hover {
 
 button.settingsResetButton:active {
     border: solid 2px red;
+}
+
+@media only screen and (max-width: 600px) {
+    div.settingsSection {
+        display: flex;
+        flex-flow: column nowrap;
+        margin: 0.3em;
+    }
+    button.settingsResetButton {
+        align-self: flex-end;
+        margin-top: 0.5em;
+    }
 }

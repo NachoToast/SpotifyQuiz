@@ -3,23 +3,26 @@ import { RootState } from './store';
 import Settings from '../types/Settings';
 import { defaultSettings, getLocalSettings, saveLocalSettings } from '../helpers/settingsHelpers';
 import {
+    clearLocalSpotifyAuth,
     ExtendedSpotifyToken,
     getLocalSpotifyAuth,
     saveLocalSpotifyAuth,
     sessionState,
 } from '../helpers/SpotifyAuthHelpers';
-import SpotifyToken from '../../../shared/SpotifyToken';
+import SpotifyUser from '../../../shared/Spotify/SpotifyUser';
 
 export interface MainState {
     settings: Settings;
     spotifyAuth: ExtendedSpotifyToken | null;
-    refreshTimeout: NodeJS.Timeout | null;
+    loggedInAs: SpotifyUser | null;
+    notification: ['loggedIn', SpotifyUser] | 'loggedOut' | 'refreshed' | null;
 }
 
 const initialState: MainState = {
     settings: getLocalSettings(),
     spotifyAuth: getLocalSpotifyAuth(),
-    refreshTimeout: null,
+    loggedInAs: null,
+    notification: null,
 };
 
 export const mainSlice = createSlice({
@@ -34,16 +37,42 @@ export const mainSlice = createSlice({
             state.settings = { ...state.settings, [action.payload]: defaultSettings()[action.payload] };
             saveLocalSettings(state.settings);
         },
-        setSpotifyOAuth(state, action: PayloadAction<SpotifyToken>) {
-            state.spotifyAuth = { ...action.payload, setAt: Date.now() };
+        setSpotifyOAuth(state, action: PayloadAction<ExtendedSpotifyToken>) {
+            state.spotifyAuth = action.payload;
             saveLocalSpotifyAuth(state.spotifyAuth);
+        },
+        clearSpotifyOAuth(state) {
+            state.spotifyAuth = null;
+            state.loggedInAs = null;
+            state.notification = 'loggedOut';
+            clearLocalSpotifyAuth();
+        },
+        setLoggedInAs(state, action: PayloadAction<SpotifyUser>) {
+            state.loggedInAs = action.payload;
+            state.notification = ['loggedIn', action.payload];
+        },
+        setRefreshedNotification(state) {
+            state.notification = 'refreshed';
+        },
+        clearNotification(state) {
+            state.notification = null;
         },
     },
 });
 
-export const { setSettings, resetSettings, setSpotifyOAuth } = mainSlice.actions;
+export const {
+    setSettings,
+    resetSettings,
+    setSpotifyOAuth,
+    clearSpotifyOAuth,
+    setLoggedInAs,
+    clearNotification,
+    setRefreshedNotification,
+} = mainSlice.actions;
 
 export const getSettings = (state: RootState) => state.main.settings;
+
+export const getSpotifyOAuth = (state: RootState) => state.main.spotifyAuth;
 
 export const getOAuthLink = (state: RootState) => {
     const params = new URLSearchParams([
@@ -57,5 +86,9 @@ export const getOAuthLink = (state: RootState) => {
 
     return `https://accounts.spotify.com/authorize?${params.toString()}`;
 };
+
+export const getLoggedInAs = (state: RootState) => state.main.loggedInAs;
+
+export const getNotification = (state: RootState) => state.main.notification;
 
 export default mainSlice.reducer;
