@@ -43,7 +43,8 @@
     "nodemonConfig": {
         "watch": [
             "src",
-            "config.json"
+            "config.json",
+            "shared"
         ]
     }
 }
