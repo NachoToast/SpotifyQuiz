@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-has-content */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
@@ -20,6 +21,9 @@ import {
     setSpotifyOAuth,
 } from './redux/mainSlice';
 import { AppDispatch } from './redux/store';
+
+import githubIcon from './github.svg';
+import settingsIcon from './settings.svg';
 
 const App = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -117,7 +121,23 @@ const App = () => {
     return (
         <BrowserRouter>
             <AlertModal />
-            <Link to="/settings" id="settingsButton" title="Settings" />
+            <div id="optionBar">
+                <a
+                    href="https://github.com/NachoToast/SpotifyQuiz"
+                    rel="noreferrer"
+                    target="_blank"
+                    id="githubButton"
+                    style={{ backgroundImage: `url(${githubIcon})` }}
+                    title="GitHub"
+                />
+                <Link
+                    to="/settings"
+                    id="settingsButton"
+                    style={{ backgroundImage: `url(${settingsIcon})` }}
+                    title="Settings"
+                />
+            </div>
+
             <Routes>
                 <Route index element={<Home />} />
                 <Route path="singleplayer" element={<Singleplayer />} />
