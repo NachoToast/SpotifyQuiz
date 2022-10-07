@@ -15,3 +15,7 @@ button.internalLink:hover {
     background-color: #17a449;
     border-color: white;
 }
+
+button.internalLink.warn:hover {
+    background-color: lightcoral;
+}
