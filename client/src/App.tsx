@@ -102,7 +102,7 @@ const App = () => {
                     dispatch(clearSpotifyOAuth());
                 }
             });
-        }, expiresIn * 1000);
+        }, scheduledIn * 1000);
 
         return () => {
             clearTimeout(timeout);
