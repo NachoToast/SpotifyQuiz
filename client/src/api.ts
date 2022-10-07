@@ -1,7 +1,9 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import SpotifyToken from '../../shared/Spotify/SpotifyToken';
 import SpotifyUser from '../../shared/Spotify/SpotifyUser';
+import SpotifyPlaylists from '../../shared/Spotify/SpotifyPlaylists';
 import { ExtendedSpotifyToken } from './helpers/SpotifyAuthHelpers';
+import SpotifyPlaylist from '../../shared/Spotify/SpotifyPlaylist';
 
 const Spotify = axios.create({
     baseURL: 'https://api.spotify.com/v1',
@@ -155,6 +157,43 @@ async function getCurrentUserProfile(accessToken: string, controller = new Abort
     return data;
 }
 
-const api = { requestSpotifyAccessToken, refreshSpotifyAccessToken, Spotify: { getCurrentUserProfile } };
+async function getAllCurrentUserPlaylists(
+    accessToken: string,
+    controller = new AbortController(),
+): Promise<SpotifyPlaylist[]> {
+    const collected = new Array<SpotifyPlaylist>();
+
+    let numRequestsMade = 0;
+
+    // if a user has more than 500 playlists I'm more concerned for their mental health
+    // rather than this function not fetching all of the playlists
+    const maxRequests = 10;
+
+    let lastRequest: SpotifyPlaylists;
+
+    do {
+        const { data } = await Spotify.get<SpotifyPlaylists>('/me/playlists', {
+            signal: controller.signal,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+            params: {
+                limit: 50,
+                offset: 50 * numRequestsMade,
+            },
+        });
+        collected.push(...data.items);
+        lastRequest = data;
+        numRequestsMade++;
+    } while (lastRequest.next !== null && numRequestsMade <= maxRequests);
+
+    return collected;
+}
+
+const api = {
+    requestSpotifyAccessToken,
+    refreshSpotifyAccessToken,
+    Spotify: { getCurrentUserProfile, getAllCurrentUserPlaylists },
+};
 
 export default api;
