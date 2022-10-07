@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { defaultSettings as getDefaultSettings } from '../../../helpers/settingsHelpers';
 import { getTimeTillExpiry } from '../../../helpers/SpotifyAuthHelpers';
@@ -57,16 +57,6 @@ const Settings = () => {
     const spotifyOAuth = useSelector(getSpotifyOAuth);
 
     const [defaultSettings] = useState(getDefaultSettings());
-
-    useEffect(() => {
-        const settingsButton = document.getElementById('settingsButton') as HTMLButtonElement;
-
-        settingsButton.classList.add('active');
-
-        return () => {
-            settingsButton.classList.remove('active');
-        };
-    }, []);
 
     const handleTextChange = useCallback(
         (k: 'serverUrl' | 'rateLimitBypassToken' | 'spotifyClientId' | 'redirectURI') => {

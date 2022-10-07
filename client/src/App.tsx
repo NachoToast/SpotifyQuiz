@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/anchor-has-content */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import api from './api';
 import AlertModal from './components/AlertModal';
 import Home from './components/Pages/Home';
@@ -22,8 +21,7 @@ import {
 } from './redux/mainSlice';
 import { AppDispatch } from './redux/store';
 
-import githubIcon from './github.svg';
-import settingsIcon from './settings.svg';
+import OptionsBar from './components/OptionsBar';
 
 const App = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -121,23 +119,7 @@ const App = () => {
     return (
         <BrowserRouter>
             <AlertModal />
-            <div id="optionBar">
-                <a
-                    href="https://github.com/NachoToast/SpotifyQuiz"
-                    rel="noreferrer"
-                    target="_blank"
-                    id="githubButton"
-                    style={{ backgroundImage: `url(${githubIcon})` }}
-                    title="GitHub"
-                />
-                <Link
-                    to="/settings"
-                    id="settingsButton"
-                    style={{ backgroundImage: `url(${settingsIcon})` }}
-                    title="Settings"
-                />
-            </div>
-
+            <OptionsBar />
             <Routes>
                 <Route index element={<Home />} />
                 <Route path="singleplayer" element={<Singleplayer />} />
