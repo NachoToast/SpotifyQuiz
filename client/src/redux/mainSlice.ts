@@ -11,11 +11,13 @@ import {
 } from '../helpers/SpotifyAuthHelpers';
 import SpotifyUser from '../../../shared/Spotify/SpotifyUser';
 import { clearLocalSpotifyUser, getLocalSpotifyUser, saveLocalSpotifyUser } from '../helpers/SpotifyUserHelpers';
+import SpotifyPlaylist from '../../../shared/Spotify/SpotifyPlaylist';
 
 export interface MainState {
     settings: Settings;
     spotifyAuth: ExtendedSpotifyToken | null;
     loggedInAs: SpotifyUser | null;
+    playlists: SpotifyPlaylist[] | null;
     notification: ['loggedIn', SpotifyUser] | 'loggedOut' | 'refreshed' | null;
 }
 
@@ -23,6 +25,7 @@ const initialState: MainState = {
     settings: getLocalSettings(),
     spotifyAuth: getLocalSpotifyAuth(),
     loggedInAs: getLocalSpotifyUser(),
+    playlists: null,
     notification: null,
 };
 
@@ -45,6 +48,7 @@ export const mainSlice = createSlice({
         clearSpotifyOAuth(state) {
             state.spotifyAuth = null;
             state.loggedInAs = null;
+            state.playlists = null;
             state.notification = 'loggedOut';
             clearLocalSpotifyAuth();
             clearLocalSpotifyUser();
@@ -60,6 +64,9 @@ export const mainSlice = createSlice({
         clearNotification(state) {
             state.notification = null;
         },
+        setPlaylists(state, action: PayloadAction<SpotifyPlaylist[] | null>) {
+            state.playlists = action.payload;
+        },
     },
 });
 
@@ -71,6 +78,7 @@ export const {
     setLoggedInAs,
     clearNotification,
     setRefreshedNotification,
+    setPlaylists,
 } = mainSlice.actions;
 
 export const getSettings = (state: RootState) => state.main.settings;
@@ -93,5 +101,7 @@ export const getOAuthLink = (state: RootState) => {
 export const getLoggedInAs = (state: RootState) => state.main.loggedInAs;
 
 export const getNotification = (state: RootState) => state.main.notification;
+
+export const getPlaylists = (state: RootState) => state.main.playlists;
 
 export default mainSlice.reducer;
