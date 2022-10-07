@@ -114,22 +114,6 @@ const App = () => {
         spotifyOAuth,
     ]);
 
-    // useEffect(() => {
-    //     // loading initial auth on app load
-    //     const existingAuth = getLocalSpotifyAuth();
-
-    //     if (existingAuth === null) return;
-
-    //     if (getTimeTillExpiry(existingAuth) < settings.minRefresh) {
-    //         console.log(
-    //             `[SpotifyAuth] Token expires too soon (${getTimeTillExpiry(existingAuth)} < ${settings.minRefresh})`,
-    //         );
-    //         dispatch(clearSpotifyOAuth());
-    //     } else {
-    //         dispatch(setSpotifyOAuth(existingAuth));
-    //     }
-    // }, [dispatch, settings.minRefresh]);
-
     return (
         <BrowserRouter>
             <AlertModal />
