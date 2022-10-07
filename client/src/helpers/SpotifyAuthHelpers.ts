@@ -1,5 +1,7 @@
-import SpotifyToken from '../../../shared/SpotifyToken';
+import SpotifyToken from '../../../shared/Spotify/SpotifyToken';
 import Settings from '../types/Settings';
+
+const KEY = 'spotifyQuiz.Auth';
 
 export interface ExtendedSpotifyToken extends SpotifyToken {
     setAt: number;
@@ -42,13 +44,17 @@ export function makeOAuthLink(s: Settings): string {
 }
 
 export function getLocalSpotifyAuth(): ExtendedSpotifyToken | null {
-    const existingAuth = localStorage.getItem('spotifyQuiz.auth');
+    const existingAuth = localStorage.getItem(KEY);
     if (existingAuth === null) return null;
     return JSON.parse(existingAuth);
 }
 
 export function saveLocalSpotifyAuth(auth: ExtendedSpotifyToken) {
-    localStorage.setItem('spotifyQuiz.auth', JSON.stringify(auth));
+    localStorage.setItem(KEY, JSON.stringify(auth));
+}
+
+export function clearLocalSpotifyAuth() {
+    localStorage.removeItem(KEY);
 }
 
 /** Returns the number of seconds until the current access token expires. */
