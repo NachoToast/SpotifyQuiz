@@ -13,12 +13,18 @@ export function defaultSettings(): Settings {
         rateLimitBypassToken: null,
         spotifyClientId: '7fa87b67fc974969abb02a43bc7d0f60',
         redirectURI: window.location.origin + '/login',
+        minRefresh: 30,
+        maxRefresh: 30,
     };
 }
 
 export function getLocalSettings(): Settings {
     const existing = localStorage.getItem(KEY);
-    if (existing !== null) return JSON.parse(existing) as Settings;
+    if (existing !== null) {
+        const existingSettings = JSON.parse(existing) as Settings;
+
+        return { ...defaultSettings(), ...existingSettings };
+    }
     return defaultSettings();
 }
 
