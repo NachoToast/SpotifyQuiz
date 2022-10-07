@@ -10,6 +10,7 @@ import {
     sessionState,
 } from '../helpers/SpotifyAuthHelpers';
 import SpotifyUser from '../../../shared/Spotify/SpotifyUser';
+import { clearLocalSpotifyUser, getLocalSpotifyUser, saveLocalSpotifyUser } from '../helpers/SpotifyUserHelpers';
 
 export interface MainState {
     settings: Settings;
@@ -21,7 +22,7 @@ export interface MainState {
 const initialState: MainState = {
     settings: getLocalSettings(),
     spotifyAuth: getLocalSpotifyAuth(),
-    loggedInAs: null,
+    loggedInAs: getLocalSpotifyUser(),
     notification: null,
 };
 
@@ -46,10 +47,12 @@ export const mainSlice = createSlice({
             state.loggedInAs = null;
             state.notification = 'loggedOut';
             clearLocalSpotifyAuth();
+            clearLocalSpotifyUser();
         },
         setLoggedInAs(state, action: PayloadAction<SpotifyUser>) {
             state.loggedInAs = action.payload;
             state.notification = ['loggedIn', action.payload];
+            saveLocalSpotifyUser(state.loggedInAs);
         },
         setRefreshedNotification(state) {
             state.notification = 'refreshed';
