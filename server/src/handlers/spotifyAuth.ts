@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import axios from 'axios';
-import SpotifyToken from '../../../shared/SpotifyToken';
+import SpotifyToken from '../../../shared/Spotify/SpotifyToken';
 import config from '../config';
 
 /**
