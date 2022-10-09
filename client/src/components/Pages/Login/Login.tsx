@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { sessionState } from '../../../helpers/SpotifyAuthHelpers';
-import { getOAuthLink, getSettings, setSpotifyOAuth } from '../../../redux/mainSlice';
+import { useContext, useEffect, useState } from 'react';
 import ExternalLink from '../../Links/ExternalLink';
 import InternalLink from '../../Links/InternalLink';
-import { AppDispatch } from '../../../redux/store';
-import api from '../../../api';
+import { SettingsContext, SpotifyContext } from '../../../Contexts';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const authLink = useSelector(getOAuthLink);
-    const settings = useSelector(getSettings);
+    const navigate = useNavigate();
+    const {
+        settings,
+        sessionData: { state: sessionState, oAuthLink },
+    } = useContext(SettingsContext);
+    const { controllers: spotifyControllers } = useContext(SpotifyContext);
 
     const [title, setTitle] = useState('Loading');
     const [subtitle, setSubtitle] = useState('Deciding what to do...');
@@ -18,7 +18,10 @@ const Login = () => {
     const [leftButtonText, setLeftButtonText] = useState('Try Again');
     const [description, setDescription] = useState<string | undefined>(undefined);
 
+    const [loggedIn, setLoggedIn] = useState(false);
+
     useEffect(() => {
+        if (loggedIn) return;
         const params = new URLSearchParams(window.location.search);
 
         const error = params.get('error');
@@ -57,31 +60,22 @@ const Login = () => {
         setTitle('Finishing Login');
         setSubtitle('Waiting for server response...');
 
-        const controller = new AbortController();
-
-        api.requestSpotifyAccessToken(settings.serverUrl, code, {
-            controller,
-            rateLimitBypassToken: settings.rateLimitBypassToken,
-        }).then((e) => {
-            if (e.success) {
-                dispatch(setSpotifyOAuth(e.data));
+        spotifyControllers.requestLogin(code, settings.redirectURI).then((e) => {
+            if (e === true) {
+                setLoggedIn(true);
                 setTitle('Logged In');
                 setSubtitle('Success!');
                 setLeftButtonText('');
                 setSubtitleColour('lightgreen');
-                window.location.href = '/';
+                navigate('/');
             } else {
-                console.log(e.error);
-                setTitle(e.error.title);
-                setSubtitle(e.error.subtitle);
+                setTitle(e.title);
+                setSubtitle(e.subtitle);
                 setSubtitleColour('lightcoral');
-                setDescription(e.error.description);
+                setDescription(e.description);
             }
         });
-        return () => {
-            controller.abort();
-        };
-    }, [dispatch, settings.rateLimitBypassToken, settings.serverUrl]);
+    }, [loggedIn, navigate, sessionState, settings.redirectURI, settings.serverUrl, spotifyControllers]);
 
     return (
         <div>
@@ -96,7 +90,7 @@ const Login = () => {
                 )}
             </p>
             <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                {leftButtonText !== '' && <ExternalLink href={authLink}>{leftButtonText}</ExternalLink>}
+                {leftButtonText !== '' && <ExternalLink href={oAuthLink}>{leftButtonText}</ExternalLink>}
                 <InternalLink href="/">Home</InternalLink>
             </div>
         </div>

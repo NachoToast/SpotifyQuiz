@@ -1,12 +1,25 @@
-import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getNotification, clearNotification } from '../../redux/mainSlice';
-import { AppDispatch } from '../../redux/store';
+import { useContext, useEffect, useRef, useState } from 'react';
+import SpotifyUser from '../../../../shared/Spotify/SpotifyUser';
+import { SpotifyContext } from '../../Contexts';
 import './AlertModal.css';
 
+type Notification = null | 'loggedOut' | 'refreshed' | SpotifyUser;
+
 const AlertModal = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const notification = useSelector(getNotification);
+    const [notification, setNotification] = useState<Notification>(null);
+    const { events: spotifyEvents } = useContext(SpotifyContext);
+
+    useEffect(() => {
+        spotifyEvents.on('loggedIn', (user) => setNotification(user));
+        spotifyEvents.on('loggedOut', () => setNotification('loggedOut'));
+        spotifyEvents.on('refreshed', () => setNotification('refreshed'));
+
+        return () => {
+            spotifyEvents.off('loggedIn', (user) => setNotification(user));
+            spotifyEvents.off('loggedOut', () => setNotification('loggedOut'));
+            spotifyEvents.off('refreshed', () => setNotification('refreshed'));
+        };
+    }, [spotifyEvents]);
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -20,7 +33,7 @@ const AlertModal = () => {
         }, 3_000);
 
         const timeout2 = setTimeout(() => {
-            dispatch(clearNotification());
+            setNotification(null);
         }, 3_300);
 
         return () => {
@@ -28,7 +41,7 @@ const AlertModal = () => {
             clearTimeout(timeout2);
             current.classList.remove('fadingOut');
         };
-    }, [dispatch, notification]);
+    }, [notification]);
 
     switch (notification) {
         case null:
@@ -51,11 +64,11 @@ const AlertModal = () => {
 
     return (
         <div ref={ref} id="alertModal">
-            {notification[1].images.at(0) !== undefined && (
-                <img src={notification[1].images[0].url} alt="Your Spotify profile" />
+            {notification.images.at(0) !== undefined && (
+                <img src={notification.images[0].url} alt="Your Spotify profile" />
             )}
             <span>
-                Logged in as <span>{notification[1].display_name}</span>
+                Logged in as <span>{notification.display_name}</span>
             </span>
         </div>
     );

@@ -1,19 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import api from '../../api';
-import { ExtendedSpotifyToken } from '../../helpers/SpotifyAuthHelpers';
-import { getPlaylists, setPlaylists } from '../../redux/mainSlice';
+import React, { useCallback, useMemo, useState } from 'react';
+import SpotifyPlaylist from '../../../../shared/Spotify/SpotifyPlaylist';
 import './PlaylistSelector.css';
 
 export interface PlaylistSelectorProps {
-    spotifyOAuth: ExtendedSpotifyToken;
+    playlists: SpotifyPlaylist[] | null;
+    accessToken: string;
 }
 
-const PlaylistSelector = (props: PlaylistSelectorProps) => {
-    const dispatch = useDispatch();
-    const playlists = useSelector(getPlaylists);
-
+const PlaylistSelector = ({ playlists, accessToken }: PlaylistSelectorProps) => {
     const [selectedPlaylist, setSelectedPlaylist] = useState<number>(-1);
+    const [directUrl, setDirectUrl] = useState('');
+    const [feedback, setFeedback] = useState('');
 
     const randomEmoji = useMemo(() => {
         const emojis = ['🥶', '🍦', '💚', '😎', '🥰', '🥝', '💀', '👍', '🍊', '👻', '🎵'];
@@ -28,35 +25,16 @@ const PlaylistSelector = (props: PlaylistSelectorProps) => {
         setSelectedPlaylist(e.target.value as unknown as number);
     }, []);
 
-    useEffect(() => {
-        if (playlists !== null) return;
-
-        const controller = new AbortController();
-        api.Spotify.getAllCurrentUserPlaylists(props.spotifyOAuth.access_token, controller)
-            .then((e) => dispatch(setPlaylists(e.sort((a, b) => a.name.localeCompare(b.name)))))
-            .catch(console.error);
-
-        return () => {
-            controller.abort();
-        };
-    }, [dispatch, playlists, props.spotifyOAuth.access_token]);
-
-    const [directUrl, setDirectUrl] = useState('');
-
     const handleDirectUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         setDirectUrl(e.target.value);
         setSelectedPlaylist(-1);
     }, []);
 
-    const [feedback, setFeedback] = useState('');
-    // const [loading, setLoading] = useState(false);
-
     const handleSubmit = useCallback(
         (e: React.FormEvent<HTMLFormElement | HTMLInputElement>) => {
             e.preventDefault();
             setFeedback('');
-            // setLoading(false);
 
             let playlistId: string;
 

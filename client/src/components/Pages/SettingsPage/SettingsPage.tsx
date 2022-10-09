@@ -1,21 +1,10 @@
-import React, { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { defaultSettings as getDefaultSettings } from '../../../helpers/settingsHelpers';
-import { getTimeTillExpiry } from '../../../helpers/SpotifyAuthHelpers';
-import {
-    clearSpotifyOAuth,
-    getOAuthLink,
-    getSettings,
-    getSpotifyOAuth,
-    resetSettings,
-    setSettings,
-    setSpotifyOAuth,
-} from '../../../redux/mainSlice';
-import { AppDispatch } from '../../../redux/store';
-import ISettings from '../../../types/Settings';
+import React, { useCallback, useContext } from 'react';
+import { SettingsContext, SpotifyContext } from '../../../Contexts';
+import { defaultSettings, Settings as ISettings } from '../../../Contexts/Settings';
+import { getSecondsTillExpiry } from '../../../Providers/Spotify/SpotifyHelpers';
 import ExternalLink from '../../Links/ExternalLink';
 import InternalLink from '../../Links/InternalLink';
-import './Settings.css';
+import './SettingsPage.css';
 
 const SettingsItem = ({
     label,
@@ -24,6 +13,7 @@ const SettingsItem = ({
     handleReset,
     isDefault,
     title,
+    type,
 }: {
     label: string;
     value: string;
@@ -31,12 +21,13 @@ const SettingsItem = ({
     handleReset: (e: React.MouseEvent<HTMLButtonElement>) => void;
     isDefault: boolean;
     title: string;
+    type?: React.HTMLInputTypeAttribute;
 }) => (
     <div className="settingsSection" title={title}>
         <label style={{ flexGrow: 1 }} htmlFor={label}>
             {label}
         </label>
-        <input onChange={handleChange} className="settingsInput" name={label} value={value} />
+        <input onChange={handleChange} className="settingsInput" type={type ?? 'text'} name={label} value={value} />
         <button
             title="Reset to default"
             onClick={handleReset}
@@ -51,45 +42,42 @@ const SettingsItem = ({
 );
 
 const Settings = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const authLink = useSelector(getOAuthLink);
-    const settings = useSelector(getSettings);
-    const spotifyOAuth = useSelector(getSpotifyOAuth);
-
-    const [defaultSettings] = useState(getDefaultSettings());
+    const {
+        settings,
+        sessionData: { oAuthLink },
+        controllers: settingsControllers,
+    } = useContext(SettingsContext);
+    const { spotify, controllers: spotifyControllers } = useContext(SpotifyContext);
 
     const handleTextChange = useCallback(
-        (k: 'serverUrl' | 'rateLimitBypassToken' | 'spotifyClientId' | 'redirectURI') => {
+        (k: 'serverUrl' | 'spotifyClientId' | 'redirectURI') => {
             return (e: React.ChangeEvent<HTMLInputElement>) => {
                 e.preventDefault();
-                if (k === 'rateLimitBypassToken' && e.target.value === '') {
-                    dispatch(setSettings({ ...settings, rateLimitBypassToken: null }));
-                } else {
-                    dispatch(setSettings({ ...settings, [k]: e.target.value }));
-                }
+                settingsControllers.setValue(k, e.target.value);
             };
         },
-        [dispatch, settings],
+        [settingsControllers],
     );
 
     const handleNumberChange = useCallback(
         (k: 'minRefresh' | 'maxRefresh') => {
             return (e: React.ChangeEvent<HTMLInputElement>) => {
                 e.preventDefault();
-                dispatch(setSettings({ ...settings, [k]: Number(e.target.value) }));
+                if (Number.isNaN(e.target.valueAsNumber)) return;
+                settingsControllers.setValue(k, e.target.valueAsNumber);
             };
         },
-        [dispatch, settings],
+        [settingsControllers],
     );
 
     const handleReset = useCallback(
         (k: keyof ISettings) => {
             return (e: React.MouseEvent<HTMLButtonElement>) => {
                 e.preventDefault();
-                dispatch(resetSettings(k));
+                settingsControllers.resetValue(k);
             };
         },
-        [dispatch],
+        [settingsControllers],
     );
 
     return (
@@ -102,14 +90,6 @@ const Settings = () => {
                 handleChange={handleTextChange('serverUrl')}
                 handleReset={handleReset('serverUrl')}
                 isDefault={defaultSettings.serverUrl === settings.serverUrl}
-            />
-            <SettingsItem
-                title="Put a bypass token for the Spotify Quiz server here if you have one"
-                label="Rate Limit Bypass Token"
-                value={settings.rateLimitBypassToken ?? ''}
-                handleChange={handleTextChange('rateLimitBypassToken')}
-                handleReset={handleReset('rateLimitBypassToken')}
-                isDefault={defaultSettings.rateLimitBypassToken === settings.rateLimitBypassToken}
             />
             <SettingsItem
                 title="Application ID from Spotify developer dashboard"
@@ -134,6 +114,7 @@ const Settings = () => {
                 handleChange={handleNumberChange('minRefresh')}
                 handleReset={handleReset('minRefresh')}
                 isDefault={defaultSettings.minRefresh === settings.minRefresh}
+                type="number"
             />
             <SettingsItem
                 title="Try to refresh tokens that expire in this many minutes or less"
@@ -142,6 +123,7 @@ const Settings = () => {
                 handleChange={handleNumberChange('maxRefresh')}
                 handleReset={handleReset('maxRefresh')}
                 isDefault={defaultSettings.maxRefresh === settings.maxRefresh}
+                type="number"
             />
             <div
                 style={{
@@ -151,20 +133,14 @@ const Settings = () => {
                 }}
             >
                 <InternalLink href="/">Home</InternalLink>
-                {spotifyOAuth !== null ? (
+                {spotify !== null ? (
                     <div>
                         <button
                             onClick={(e) => {
                                 e.preventDefault();
-                                dispatch(
-                                    setSpotifyOAuth({
-                                        ...spotifyOAuth,
-                                        expires_in: settings.maxRefresh * 60,
-                                        setAt: Date.now(),
-                                    }),
-                                );
+                                spotifyControllers.requestRefresh(spotify);
                             }}
-                            title={`Expires in ${Math.floor(getTimeTillExpiry(spotifyOAuth) / 60)} minutes`}
+                            title={`Expires in ${Math.floor(getSecondsTillExpiry(spotify) / 60)} minutes`}
                             className="internalLink"
                         >
                             Refresh
@@ -172,7 +148,7 @@ const Settings = () => {
                         <button
                             onClick={(e) => {
                                 e.preventDefault();
-                                dispatch(clearSpotifyOAuth());
+                                spotifyControllers.logout();
                             }}
                             title="Log out of current Spotify session"
                             className="internalLink warn"
@@ -181,7 +157,7 @@ const Settings = () => {
                         </button>
                     </div>
                 ) : (
-                    <ExternalLink href={authLink}>Login</ExternalLink>
+                    <ExternalLink href={oAuthLink}>Login</ExternalLink>
                 )}
             </div>
         </div>
