@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import '../../helpers/SpotifyAuthHelpers';
 import './Links.css';
 
 export interface ExternalLinkProps {

@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import './Links.css';
-import '../../helpers/SpotifyAuthHelpers';
 
 export interface InternalLinkProps {
     href: string;
