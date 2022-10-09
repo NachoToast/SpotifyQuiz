@@ -1,25 +1,35 @@
-import express from 'express';
 import config from './config';
-import { spotifyAuth } from './handlers';
-import { corsHandler, customErrorHandler, customRateLimiter } from './middleware';
+import { ClientToServerEvents, ServerToClientEvents } from '../../shared/SocketEvents';
 
-const app = express();
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import { spotifyLoginHandler, spotifyRefreshHandler } from './handlers';
 
-app.use(corsHandler);
-app.use(customErrorHandler);
-app.use(customRateLimiter);
+const whitelist = new Set(config.clientURLs ?? ['http://localhost:3000']);
 
-app.set('trust proxy', config.numProxies ?? 0);
+const httpServer = createServer();
 
-app.get('/ip', (req, res) => res.status(200).send(req.ip));
+export const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
+    cors: {
+        origin(requestOrigin, callback) {
+            if (requestOrigin === undefined || whitelist.has(requestOrigin)) callback(null, true);
+            else callback(new Error('Not allowed by CORS'));
+        },
+    },
+});
 
-app.get('/', (_, res) =>
-    res.status(200).send({
-        startTime: config.startedAt,
-        version: config.version,
-    }),
-);
+io.on('connection', (s) => {
+    console.log('connection!');
 
-app.get('/auth', spotifyAuth);
+    s.on('spotifyLogin', async (accessToken, redirectUri) => {
+        s.emit('spotifyLoginComplete', await spotifyLoginHandler(accessToken, redirectUri));
+    });
 
-app.listen(config.port ?? 3001, () => console.log(`Listening on ${config.port ?? 3001}`));
+    s.on('spotifyRefresh', async (refreshToken) => {
+        s.emit('spotifyRefreshComplete', await spotifyRefreshHandler(refreshToken));
+    });
+
+    s.on('disconnect', () => console.log('disconnected'));
+});
+
+httpServer.listen(config.port ?? 3001, () => console.log(`Listening on ${config.port ?? 3001}`));

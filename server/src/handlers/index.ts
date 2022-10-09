@@ -1,3 +1,1 @@
-import spotifyAuth from './spotifyAuth';
-
-export { spotifyAuth };
+export { spotifyLoginHandler, spotifyRefreshHandler } from './spotifyAuth';
