@@ -1,15 +1,21 @@
 import React from 'react';
-import InternalLink from '../Links/InternalLink';
 
 const Home = () => {
     return (
-        <div>
+        <div style={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'center' }}>
             <h1>Spotify Quiz</h1>
             <p style={{ textAlign: 'center' }}>How well do you know your Spotify playlists?</p>
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly' }}>
-                <InternalLink href="/singleplayer">Singleplayer</InternalLink>
-                <InternalLink href="/multiplayer">Multiplayer</InternalLink>
-            </div>
+            <form style={{ display: 'flex', flexFlow: 'row nowrap' }}>
+                <input type="text" placeholder="Enter Game Code" name="gameCodeInput" />
+                <input
+                    type="submit"
+                    value="Go"
+                    readOnly
+                    style={{ marginLeft: '0.2em' }}
+                    onClick={(e) => e.preventDefault()}
+                />
+            </form>
+            <p>Or create a game instead</p>
         </div>
     );
 };
