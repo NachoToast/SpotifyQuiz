@@ -34,6 +34,7 @@ const SpotifyContextProvider = ({ children }: { children: ReactNode }) => {
                         });
                         resolve(true);
                     } else {
+                        console.log('[SpotifyProvider] requestLogin error');
                         console.error(e);
                         resolve(e.error);
                     }
@@ -62,6 +63,7 @@ const SpotifyContextProvider = ({ children }: { children: ReactNode }) => {
                         resolve(true);
                     } else {
                         setSpotify(null);
+                        console.log('[SpotifyProvider] request refresh error');
                         console.error(e);
                         resolve(e.error);
                     }
@@ -124,7 +126,10 @@ const SpotifyContextProvider = ({ children }: { children: ReactNode }) => {
             .then((user) => {
                 setSpotify({ ...spotify, user });
             })
-            .catch(console.error);
+            .catch((e) => {
+                console.log('[SpotifyProvider] getCurrentUserProfile error');
+                console.error(e);
+            });
 
         return () => {
             controller.abort();
@@ -140,7 +145,10 @@ const SpotifyContextProvider = ({ children }: { children: ReactNode }) => {
             .then((playlists) => {
                 setSpotify({ ...spotify, playlists });
             })
-            .catch(console.error);
+            .catch((e) => {
+                console.log('[SpotifyProvider] getCurrentUserPlaylists error');
+                console.error(e);
+            });
 
         return () => {
             controller.abort();
