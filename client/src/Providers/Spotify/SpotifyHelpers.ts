@@ -2,6 +2,8 @@ import axios from 'axios';
 import SpotifyPlaylist from '../../../../shared/Spotify/SpotifyPlaylist';
 import SpotifyPlaylists from '../../../../shared/Spotify/SpotifyPlaylists';
 import SpotifyUser from '../../../../shared/Spotify/SpotifyUser';
+import SpotifyTrack from '../../../../shared/Spotify/SpotifyTrack';
+import SpotifyTracks from '../../../../shared/Spotify/SpotifyTracks';
 import { Spotify } from '../../Contexts/Spotify';
 
 const KEY = 'spotifyQuiz.Spotify';
@@ -61,6 +63,40 @@ export async function getAllCurrentUserPlaylists(
 
     do {
         const { data } = await axios.get<SpotifyPlaylists>('/me/playlists', {
+            signal: controller.signal,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+            params: {
+                limit: 50,
+                offset: 50 * numRequestsMade,
+            },
+            baseURL: 'https://api.spotify.com/v1',
+        });
+        collected.push(...data.items);
+        lastRequest = data;
+        numRequestsMade++;
+    } while (lastRequest.next !== null && numRequestsMade <= maxRequests);
+
+    return collected;
+}
+
+export async function getAllPlaylistTracks(
+    accessToken: string,
+    playlistId: string,
+    controller: AbortController,
+): Promise<SpotifyTrack[]> {
+    const collected = new Array<SpotifyTrack>();
+
+    let numRequestsMade = 0;
+
+    // we'll probably get ratelimited before then lmao
+    const maxRequests = 100;
+
+    let lastRequest: SpotifyTracks;
+
+    do {
+        const { data } = await axios.get<SpotifyTracks>(`/playlists/${playlistId}/tracks`, {
             signal: controller.signal,
             headers: {
                 Authorization: `Bearer ${accessToken}`,

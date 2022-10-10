@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import SpotifyPlaylist from '../../../../shared/Spotify/SpotifyPlaylist';
+import { getAllPlaylistTracks } from '../../Providers/Spotify/SpotifyHelpers';
 import './PlaylistSelector.css';
 
 export interface PlaylistSelectorProps {
@@ -61,9 +62,23 @@ const PlaylistSelector = ({ playlists, accessToken }: PlaylistSelectorProps) => 
                 playlistId = playlists[selectedPlaylist].id;
             } else return;
 
-            console.log(playlistId);
+            setFeedback('Loading tracks....');
+
+            const controller = new AbortController();
+
+            getAllPlaylistTracks(accessToken, playlistId, controller)
+                .then((e) => {
+                    console.log(e);
+                })
+                .catch((e) => {
+                    console.log(e);
+                });
+
+            return () => {
+                controller.abort();
+            };
         },
-        [directUrl, playlists, selectedPlaylist],
+        [accessToken, directUrl, playlists, selectedPlaylist],
     );
 
     return (
