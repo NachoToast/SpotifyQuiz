@@ -127,8 +127,9 @@ const SpotifyContextProvider = ({ children }: { children: ReactNode }) => {
                 setSpotify({ ...spotify, user });
             })
             .catch((e) => {
-                console.log('[SpotifyProvider] getCurrentUserProfile error');
-                console.error(e);
+                if (!(e instanceof Error) || e.name !== 'CanceledError') {
+                    console.error('[SpotifyProvider] getCurrentUserProfile error', e);
+                }
             });
 
         return () => {
@@ -146,8 +147,9 @@ const SpotifyContextProvider = ({ children }: { children: ReactNode }) => {
                 setSpotify({ ...spotify, playlists });
             })
             .catch((e) => {
-                console.log('[SpotifyProvider] getCurrentUserPlaylists error');
-                console.error(e);
+                if (!(e instanceof Error) || e.name !== 'CanceledError') {
+                    console.error('[SpotifyProvider] getCurrentUserPlaylists error', e);
+                }
             });
 
         return () => {
