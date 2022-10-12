@@ -10,7 +10,11 @@ import { generateSessionData, getLocalSettings, saveLocalSettings } from './Sett
 
 const SettingsContextProvider = ({ children }: { children: ReactNode }) => {
     const [settings, setSettings] = useState<Settings>(getLocalSettings);
-    const sessionData = useMemo(() => generateSessionData(settings), [settings]);
+
+    const sessionData = useMemo(
+        () => generateSessionData(settings.spotifyClientId, settings.redirectUri),
+        [settings.redirectUri, settings.spotifyClientId],
+    );
 
     useEffect(() => saveLocalSettings(settings), [settings]);
 

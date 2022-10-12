@@ -39,7 +39,7 @@ export default interface SpotifyTrack {
 
     track_number: number;
 
-    type: `track`;
+    type: 'track';
 
     uri: string;
 }

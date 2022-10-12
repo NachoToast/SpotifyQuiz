@@ -1,1 +1,4 @@
-export { spotifyLoginHandler, spotifyRefreshHandler } from './spotifyAuth';
+import createGame from './createGame';
+import spotifyAuth from './spotifyAuth';
+
+export { spotifyAuth, createGame };

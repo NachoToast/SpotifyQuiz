@@ -1,36 +1,35 @@
 import axios from 'axios';
-import SpotifyPlaylist from '../../../../shared/Spotify/SpotifyPlaylist';
-import SpotifyPlaylists from '../../../../shared/Spotify/SpotifyPlaylists';
-import SpotifyUser from '../../../../shared/Spotify/SpotifyUser';
-import SpotifyTrack from '../../../../shared/Spotify/SpotifyTrack';
-import SpotifyTracks from '../../../../shared/Spotify/SpotifyTracks';
 import { Spotify } from '../../Contexts/Spotify';
+import {
+    SpotifyUser,
+    SpotifyPlaylist,
+    SpotifyPlaylists,
+    SpotifyTrack,
+    SpotifyPlaylistTracks,
+} from '../../types/Spotify';
 
-const KEY = 'spotifyQuiz.Spotify';
+const KEY_AUTH = 'spotifyQuiz.Spotify.Auth';
+const KEY_USER = 'spotifyQuiz.Spotify.User';
 
-export function getLocalSpotify(): Spotify | null {
-    const existing = localStorage.getItem(KEY);
+export function getLocalSpotify<T extends 'authData' | 'userData'>(key: T): Spotify[T] | null {
+    const existing = localStorage.getItem(key === 'authData' ? KEY_AUTH : KEY_USER);
     if (existing !== null) {
-        const existingPartial: Omit<Spotify, 'playlists'> = JSON.parse(existing);
-
-        return { ...existingPartial, playlists: null };
+        return JSON.parse(existing);
     }
     return null;
 }
 
-export function saveLocalSpotify(s: Omit<Spotify, 'playlists'> | null): void {
-    if (s === null) {
-        localStorage.removeItem(KEY);
+export function saveLocalSpotify<T extends 'authData' | 'userData'>(key: T, data: Spotify[T] | null): void {
+    if (data === null) {
+        localStorage.removeItem(key === 'authData' ? KEY_AUTH : KEY_USER);
         return;
     }
 
-    const newPartial: Omit<Spotify, 'playlists'> = { authData: s.authData, user: s.user };
-
-    localStorage.setItem(KEY, JSON.stringify(newPartial));
+    localStorage.setItem(key === 'authData' ? KEY_AUTH : KEY_USER, JSON.stringify(data));
 }
 
-export function getSecondsTillExpiry(s: Spotify): number {
-    const expiresAt = new Date(s.authData.setAt).getTime() + 1000 * s.authData.expires_in;
+export function getSecondsTillExpiry(authData: Spotify['authData']): number {
+    const expiresAt = new Date(authData.setAt).getTime() + 1000 * authData.expires_in;
 
     return Math.floor((expiresAt - Date.now()) / 1000);
 }
@@ -93,10 +92,10 @@ export async function getAllPlaylistTracks(
     // we'll probably get ratelimited before then lmao
     const maxRequests = 100;
 
-    let lastRequest: SpotifyTracks;
+    let lastRequest: SpotifyPlaylistTracks;
 
     do {
-        const { data } = await axios.get<SpotifyTracks>(`/playlists/${playlistId}/tracks`, {
+        const { data } = await axios.get<SpotifyPlaylistTracks>(`/playlists/${playlistId}/tracks`, {
             signal: controller.signal,
             headers: {
                 Authorization: `Bearer ${accessToken}`,

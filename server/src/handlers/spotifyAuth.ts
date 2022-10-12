@@ -1,70 +1,45 @@
+import { RequestHandler } from 'express';
 import axios from 'axios';
-import { APIResponse, ServerErrorResponse } from '../../../shared/SocketEvents';
-import { SpotifyLoginToken, SpotifyRefreshToken } from '../../../shared/SpotifyToken';
+import { SpotifyLoginToken } from '../../../shared/SpotifyTokens';
 import config from '../config';
 
-function handleSpotifyError(e: unknown): ServerErrorResponse {
-    if (axios.isAxiosError(e)) {
-        if (typeof e.response?.data.error === 'string' && typeof e.response.data.error_description === 'string') {
-            return {
-                title: e.response.statusText,
-                subtitle: e.response.data.error_description,
-            };
-        }
+/**
+ * Handler for Spotify OAuth processes, can:
+ *
+ * - Upgrade an authorization code to an access token (`?code=abc&redirect_uri=abc`).
+ * - Refresh an access token with a refresh token (`?refresh_token=abc`).
+ */
+const spotifyAuth: RequestHandler = async (req, res) => {
+    const redirectUri = req.query.redirect_uri;
+    const code = req.query.code;
+    const refreshToken = req.query.refresh_token;
 
-        return {
-            title: 'Unknown Error',
-            subtitle: 'An unknown error occurred',
-            description: `${e.code}: ${e.message}`,
-        };
+    const body = new URLSearchParams();
+
+    if (typeof code === 'string' && typeof redirectUri === 'string') {
+        body.set('grant_type', 'authorization_code');
+        body.set('code', code);
+        body.set('redirect_uri', redirectUri);
+    } else if (typeof refreshToken === 'string') {
+        body.set('grant_type', 'refresh_token');
+        body.set('refresh_token', refreshToken);
+    } else {
+        return res.status(400).json({
+            message: `One of ('code' and 'redirect_uri') or 'refresh_token' (in query) must be a string, got ${typeof code}, ${typeof redirectUri} and ${typeof refreshToken} respectively`,
+        });
     }
-
-    return {
-        title: 'Unknown Error',
-        subtitle: 'An unknown error occurred',
-    };
-}
-
-export async function spotifyLoginHandler(
-    authorizationCode: string,
-    redirectUri: string,
-): Promise<APIResponse<SpotifyLoginToken>> {
-    const body = new URLSearchParams([
-        ['grant_type', 'authorization_code'],
-        ['code', authorizationCode],
-        ['redirect_uri', redirectUri],
-    ]);
 
     try {
         const { data } = await axios.post<SpotifyLoginToken>('https://accounts.spotify.com/api/token', body, {
             auth: { username: config.spotifyClientId, password: config.spotifyClientSecret },
         });
-
-        return { success: true, data };
+        return res.status(200).json(data);
     } catch (error) {
-        return {
-            success: false,
-            error: handleSpotifyError(error),
-        };
+        if (axios.isAxiosError(error)) {
+            return res.status(error.response?.status ?? 500).json(error.response?.data);
+        }
+        return res.sendStatus(500);
     }
-}
+};
 
-export async function spotifyRefreshHandler(refreshToken: string): Promise<APIResponse<SpotifyRefreshToken>> {
-    const body = new URLSearchParams([
-        ['grant_type', 'refresh_token'],
-        ['refresh_token', refreshToken],
-    ]);
-
-    try {
-        const { data } = await axios.post<SpotifyRefreshToken>('https://accounts.spotify.com/api/token', body, {
-            auth: { username: config.spotifyClientId, password: config.spotifyClientSecret },
-        });
-
-        return { success: true, data };
-    } catch (error) {
-        return {
-            success: false,
-            error: handleSpotifyError(error),
-        };
-    }
-}
+export default spotifyAuth;

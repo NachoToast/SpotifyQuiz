@@ -1,4 +1,4 @@
-import { Settings, ISettingsContext, SettingsControllers, SettingsSessionData } from './Settings';
+import { Settings, ISettingsContext, SettingsControllers, SettingsSessionData } from './SettingsTypes';
 
 export const defaultSettings: Settings = {
     serverUrl:
@@ -7,8 +7,9 @@ export const defaultSettings: Settings = {
             : window.location.host === 'ntgc.ddns.net:3000'
             ? 'http://ntgc.ddns.net:3001'
             : 'production server not yet implemented',
+    rateLimitBypassToken: '',
     spotifyClientId: '7fa87b67fc974969abb02a43bc7d0f60',
-    redirectURI: window.location.origin + '/login',
+    redirectUri: window.location.origin + '/login',
     minRefresh: 30,
     maxRefresh: 30,
 };

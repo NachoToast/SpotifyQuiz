@@ -19,3 +19,13 @@ button.internalLink:hover {
 button.internalLink.warn:hover {
     background-color: lightcoral;
 }
+
+.linkLike {
+    transition: 200ms linear;
+    cursor: pointer;
+    color: #1ed760;
+}
+
+.linkLike:hover {
+    color: #17a449;
+}

@@ -1,0 +1,113 @@
+div.gameContainer {
+    display: flex;
+    flex-flow: row nowrap;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: #282c34;
+}
+
+div.mainContent {
+    display: flex;
+    flex-flow: column nowrap;
+    border: solid 1px white;
+    flex-grow: 1;
+}
+
+div.gameSong {
+    flex-grow: 1;
+    border: solid 1px yellow;
+}
+
+div.gameChat {
+    flex-grow: 1;
+    border: solid 1px green;
+}
+
+div.gameSidebar {
+    display: flex;
+    flex-flow: column nowrap;
+    min-width: 300px;
+    align-items: center;
+}
+
+div.gamePlayers {
+    flex-grow: 1;
+    width: 100%;
+}
+
+div.gamePlayers > h3 {
+    margin: 0.5em 0;
+}
+
+div.gamePlayers table {
+    padding: 0 0.5em;
+    width: 100%;
+}
+
+div.gamePlayers th {
+    color: gray;
+    font-weight: normal;
+}
+
+div.gamePlayers img.crownIcon {
+    margin-bottom: -0.1em;
+}
+
+div.gamePlayers th:nth-child(1) {
+    text-align: left;
+}
+
+div.gamePlayers th:nth-child(2) {
+    text-align: right;
+}
+
+div.gamePlayers td {
+    font-size: 18pt;
+    margin: 0;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+div.gamePlayers td:nth-child(1) {
+    text-align: left;
+}
+
+div.gamePlayers td:nth-child(2) {
+    text-align: right;
+}
+
+div.gameButtons {
+    border-top: solid 1px gray;
+    display: flex;
+    width: 100%;
+}
+
+div.gameButtons > div {
+    width: 1px;
+    background-color: gray;
+}
+
+div.gameButtons > button {
+    background-color: inherit;
+    font: inherit;
+    color: inherit;
+    border: none;
+    padding: 0.4em;
+    font-size: calc(10px + 1vmin);
+    cursor: pointer;
+    transition: background-color 200ms linear;
+    flex-grow: 1;
+}
+
+.copyCodeButton:hover {
+    background-color: gray;
+}
+
+.quitGameButton:hover {
+    background-color: lightcoral;
+    border-color: white;
+}

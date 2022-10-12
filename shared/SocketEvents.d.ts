@@ -1,19 +1,16 @@
-import { SpotifyLoginToken, SpotifyRefreshToken } from './SpotifyToken';
+import { SpotifyLoginToken, SpotifyRefreshToken } from './SpotifyTokens';
+import GameUser from './GameUser';
+import GameSettings from './GameSettings';
 
-interface ServerErrorResponse {
-    title: string;
-    subtitle: string;
-    description?: string;
+export interface ServerToClientEvents {
+    setNameFailed: (reason: 'missing' | 'taken' | 'tooShort' | 'tooLong' | 'invalidChars') => void;
+    welcomeToGame: (users: GameUser[]) => void;
+    userJoined: (user: GameUser) => void;
+    userLeft: (user: GameUser) => void;
+    chatMessage: (from: string, message: string) => void;
 }
 
-type APIResponse<T> = { success: true; data: T } | { success: false; error: ServerErrorResponse };
-
-interface ServerToClientEvents {
-    spotifyLoginComplete: (newAuthData: APIResponse<SpotifyLoginToken>) => void;
-    spotifyRefreshComplete: (newAuthData: APIResponse<SpotifyRefreshToken>) => void;
-}
-
-interface ClientToServerEvents {
-    spotifyLogin: (authorizationCode: string, redirectUri: string) => void;
-    spotifyRefresh: (refreshToken: string) => void;
+export interface ClientToServerEvents {
+    setName: (username: string) => void;
+    chatMessage: (message: string) => void;
 }

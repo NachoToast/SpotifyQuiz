@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import SpotifyUser from '../../../../shared/Spotify/SpotifyUser';
+import SpotifyUser from '../../types/Spotify/SpotifyUser';
 import { SpotifyContext } from '../../Contexts';
 import './AlertModal.css';
 

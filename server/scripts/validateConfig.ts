@@ -3,33 +3,33 @@ import { Config } from '../src/config';
 import exampleConfig from '../config.example.json';
 
 enum Colours {
-    Reset = `\x1b[0m`,
-    Bright = `\x1b[1m`,
-    Dim = `\x1b[2m`,
-    Underscore = `\x1b[4m`,
-    Blink = `\x1b[5m`,
-    Reverse = `\x1b[7m`,
-    Hidden = `\x1b[8m`,
+    Reset = '\x1b[0m',
+    Bright = '\x1b[1m',
+    Dim = '\x1b[2m',
+    Underscore = '\x1b[4m',
+    Blink = '\x1b[5m',
+    Reverse = '\x1b[7m',
+    Hidden = '\x1b[8m',
 
     // foreground
-    FgBlack = `\x1b[30m`,
-    FgRed = `\x1b[31m`,
-    FgGreen = `\x1b[32m`,
-    FgYellow = `\x1b[33m`,
-    FgBlue = `\x1b[34m`,
-    FgMagenta = `\x1b[35m`,
-    FgCyan = `\x1b[36m`,
-    FgWhite = `\x1b[37m`,
+    FgBlack = '\x1b[30m',
+    FgRed = '\x1b[31m',
+    FgGreen = '\x1b[32m',
+    FgYellow = '\x1b[33m',
+    FgBlue = '\x1b[34m',
+    FgMagenta = '\x1b[35m',
+    FgCyan = '\x1b[36m',
+    FgWhite = '\x1b[37m',
 
     // background
-    BgBlack = `\x1b[40m`,
-    BgRed = `\x1b[41m`,
-    BgGreen = `\x1b[42m`,
-    BgYellow = `\x1b[43m`,
-    BgBlue = `\x1b[44m`,
-    BgMagenta = `\x1b[45m`,
-    BgCyan = `\x1b[46m`,
-    BgWhite = `\x1b[47m`,
+    BgBlack = '\x1b[40m',
+    BgRed = '\x1b[41m',
+    BgGreen = '\x1b[42m',
+    BgYellow = '\x1b[43m',
+    BgBlue = '\x1b[44m',
+    BgMagenta = '\x1b[45m',
+    BgCyan = '\x1b[46m',
+    BgWhite = '\x1b[47m',
 }
 
 /**
@@ -38,14 +38,14 @@ enum Colours {
  *
  * This will be used to validate `config.example.json`, and `config.json` if it exists.
  */
-const _fakeConfig: Omit<Config, `version` | `startedAt`> = {
+const _fakeConfig: Omit<Config, 'version' | 'startedAt'> = {
     port: 0,
-    clientURLs: [``],
+    clientURLs: [''],
     numProxies: 0,
     maxRequestsPerMinute: 0,
-    rateLimitBypassTokens: [``],
-    spotifyClientId: ``,
-    spotifyClientSecret: ``,
+    rateLimitBypassTokens: [''],
+    spotifyClientId: '',
+    spotifyClientSecret: '',
 };
 
 // typescript does weird stuff with indexes, to avoid this our comparison function
@@ -66,8 +66,8 @@ function recursivelyCompareObjects(
 ): boolean {
     const trueTypeOf = (value: unknown): string => {
         if (Array.isArray(value)) {
-            if (value.length > 0) return trueTypeOf(value[0]) + `[]`;
-            return `empty[]`;
+            if (value.length > 0) return trueTypeOf(value[0]) + '[]';
+            return 'empty[]';
         }
         return typeof value;
     };
@@ -92,10 +92,10 @@ function recursivelyCompareObjects(
             );
             areEquivalent = false;
         } else if (trueTypeOf(correct[key]) !== trueTypeOf(target[key])) {
-            if (trueTypeOf(target[key]) === `empty[]`) continue;
+            if (trueTypeOf(target[key]) === 'empty[]') continue;
             logDifference(key);
             areEquivalent = false;
-        } else if (typeof correct[key] === `object`) {
+        } else if (typeof correct[key] === 'object') {
             const valA = correct[key] as object;
             const valB = target[key] as object;
             try {
@@ -125,16 +125,16 @@ function recursivelyCompareObjects(
 
 let exitStatus = 0;
 
-if (recursivelyCompareObjects(fakeConfig, exampleConfig, `config.example.json`)) {
+if (recursivelyCompareObjects(fakeConfig, exampleConfig, 'config.example.json')) {
     console.log(`${Colours.FgGreen}✓ config.example.json is valid${Colours.Reset}`);
 } else {
     exitStatus = 1;
 }
 
-if (existsSync(`config.json`)) {
+if (existsSync('config.json')) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const actualConfig = require(`../config.json`);
-    if (recursivelyCompareObjects(fakeConfig, actualConfig, `config.json`)) {
+    const actualConfig = require('../config.json');
+    if (recursivelyCompareObjects(fakeConfig, actualConfig, 'config.json')) {
         console.log(`${Colours.FgGreen}✓ config.json is valid${Colours.Reset}`);
     } else {
         exitStatus = 1;

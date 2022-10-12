@@ -26,7 +26,7 @@ export default interface SpotifyUser {
 
     images: SpotifyImage[];
 
-    type: `user`;
+    type: 'user';
 
     uri: string;
 }

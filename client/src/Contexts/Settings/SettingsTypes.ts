@@ -2,10 +2,12 @@ export interface Settings {
     /** Endpoint for the Spotify Quiz API. */
     serverUrl: string;
 
+    rateLimitBypassToken: string;
+
     spotifyClientId: string;
 
     /** @default window.location.origin + '/login' */
-    redirectURI: string;
+    redirectUri: string;
 
     /**
      * Will not try to refresh tokens if they expire in less than
@@ -29,7 +31,7 @@ export interface SettingsControllers {
     resetValue<T extends keyof Settings>(key: T): void;
 }
 
-interface SettingsSessionData {
+export interface SettingsSessionData {
     state: string;
     oAuthLink: string;
 }

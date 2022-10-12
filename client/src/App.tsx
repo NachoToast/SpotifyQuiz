@@ -4,7 +4,6 @@ import Home from './components/Pages/Home';
 import Login from './components/Pages/Login';
 import NotFound from './components/Pages/NotFound';
 import SettingsPage from './components/Pages/SettingsPage';
-import Singleplayer from './components/Pages/Singleplayer';
 
 import './styles/Inputs.css';
 
@@ -19,7 +18,6 @@ const App = () => {
                 <OptionsBar />
                 <Routes>
                     <Route index element={<Home />} />
-                    <Route path="singleplayer" element={<Singleplayer />} />
                     <Route path="settings" element={<SettingsPage />} />
                     <Route path="login" element={<Login />} />
                     <Route path="*" element={<NotFound />} />

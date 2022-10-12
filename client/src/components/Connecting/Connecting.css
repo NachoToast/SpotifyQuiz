@@ -1,0 +1,15 @@
+p.tooLongText {
+    color: lightcoral;
+    animation: fadeIn 200ms linear;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

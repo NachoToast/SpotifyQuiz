@@ -2,10 +2,12 @@ div.settingsSection {
     display: flex;
     flex-flow: row nowrap;
     margin: 0.3em;
+    width: 100%;
 }
 
 input.settingsInput {
     margin-left: 0.5em;
+    min-width: min(40vw, 550px);
 }
 
 input.settingsInput:focus {
@@ -33,10 +35,13 @@ button.settingsResetButton:active {
 }
 
 @media only screen and (max-width: 600px) {
+    input.settingsInput {
+        margin-left: 0;
+        min-width: unset;
+    }
     div.settingsSection {
         display: flex;
         flex-flow: column nowrap;
-        margin: 0.3em;
     }
     button.settingsResetButton {
         align-self: flex-end;

@@ -1,4 +1,3 @@
-import SpotifyExternalURLs from './SpotifyExternalURLs';
 import SpotifyTrack from './SpotifyTrack';
 
 /**

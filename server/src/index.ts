@@ -1,35 +1,54 @@
+import { createServer } from 'http';
+import express from 'express';
 import config from './config';
+import { corsHandler, customErrorHandler, customRateLimiter } from './middleware';
+import { createGame, spotifyAuth } from './handlers';
+import Game from './classes/Game';
+import { Server } from 'socket.io';
 import { ClientToServerEvents, ServerToClientEvents } from '../../shared/SocketEvents';
 
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import { spotifyLoginHandler, spotifyRefreshHandler } from './handlers';
+const app = express();
 
-const whitelist = new Set(config.clientURLs ?? ['http://localhost:3000']);
+app.use(customErrorHandler);
+app.use(customRateLimiter);
+app.use(corsHandler);
 
-const httpServer = createServer();
+app.set('trust proxy', config.numProxies ?? 0);
+
+app.get('/', (_, res) => res.status(200).json({ startTime: config.startedAt, version: config.version }));
+
+app.get('/ip', (req, res) => res.status(200).send(req.ip));
+
+app.get('/auth', spotifyAuth);
+
+app.post('/game', createGame);
+
+const httpServer = createServer(app);
+
+httpServer.listen(config.port ?? 3001, () => {
+    console.log(`Listening on ${config.port ?? 3001}`);
+});
+
+/** Games mapped by their codes. */
+export const gameCodeMap = new Map<string, Game>();
 
 export const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
-    cors: {
-        origin(requestOrigin, callback) {
-            if (requestOrigin === undefined || whitelist.has(requestOrigin)) callback(null, true);
-            else callback(new Error('Not allowed by CORS'));
-        },
-    },
+    cors: { ...corsHandler },
 });
 
-io.on('connection', (s) => {
-    console.log('connection!');
+io.on('connect', (socket) => {
+    const gameCode = socket.handshake.auth.gameCode;
+    if (typeof gameCode !== 'string') {
+        socket.disconnect();
+        return;
+    }
 
-    s.on('spotifyLogin', async (accessToken, redirectUri) => {
-        s.emit('spotifyLoginComplete', await spotifyLoginHandler(accessToken, redirectUri));
-    });
+    const game = gameCodeMap.get(gameCode);
 
-    s.on('spotifyRefresh', async (refreshToken) => {
-        s.emit('spotifyRefreshComplete', await spotifyRefreshHandler(refreshToken));
-    });
+    if (game === undefined) {
+        socket.disconnect();
+        return;
+    }
 
-    s.on('disconnect', () => console.log('disconnected'));
+    game.handleJoin(socket);
 });
-
-httpServer.listen(config.port ?? 3001, () => console.log(`Listening on ${config.port ?? 3001}`));

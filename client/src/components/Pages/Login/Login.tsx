@@ -60,7 +60,7 @@ const Login = () => {
         setTitle('Finishing Login');
         setSubtitle('Waiting for server response...');
 
-        spotifyControllers.requestLogin(code, settings.redirectURI).then((e) => {
+        spotifyControllers.requestLogin(code, settings.redirectUri).then((e) => {
             if (e === true) {
                 setLoggedIn(true);
                 setTitle('Logged In');
@@ -75,7 +75,7 @@ const Login = () => {
                 setDescription(e.description);
             }
         });
-    }, [loggedIn, navigate, sessionState, settings.redirectURI, settings.serverUrl, spotifyControllers]);
+    }, [loggedIn, navigate, sessionState, settings.redirectUri, settings.serverUrl, spotifyControllers]);
 
     return (
         <div>

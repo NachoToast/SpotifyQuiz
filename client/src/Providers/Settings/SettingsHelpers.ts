@@ -1,5 +1,4 @@
-import { defaultSettings, Settings } from '../../Contexts/Settings';
-import { SettingsSessionData } from '../../Contexts/Settings/Settings';
+import { Settings, defaultSettings, SettingsSessionData } from '../../Contexts/Settings';
 
 const KEY = 'spotifyQuiz.Settings';
 
@@ -17,7 +16,7 @@ export function saveLocalSettings(s: Settings): void {
     localStorage.setItem(KEY, JSON.stringify(s));
 }
 
-export function generateSessionData(s: Settings): SettingsSessionData {
+export function generateSessionData(spotifyClientId: string, redirectUri: string): SettingsSessionData {
     let state = sessionStorage.getItem('spotifyQuiz.State');
     if (state === null) {
         state = new Array(32)
@@ -29,9 +28,9 @@ export function generateSessionData(s: Settings): SettingsSessionData {
 
     const linkParams = new URLSearchParams([
         ['response_type', 'code'],
-        ['client_id', s.spotifyClientId],
+        ['client_id', spotifyClientId],
         ['scope', 'playlist-read-private'],
-        ['redirect_uri', s.redirectURI],
+        ['redirect_uri', redirectUri],
         ['state', state],
         ['show_dialog', 'true'],
     ]);

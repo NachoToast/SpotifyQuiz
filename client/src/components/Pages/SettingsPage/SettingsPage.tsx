@@ -50,7 +50,7 @@ const Settings = () => {
     const { spotify, controllers: spotifyControllers } = useContext(SpotifyContext);
 
     const handleTextChange = useCallback(
-        (k: 'serverUrl' | 'spotifyClientId' | 'redirectURI') => {
+        (k: 'serverUrl' | 'rateLimitBypassToken' | 'spotifyClientId' | 'redirectUri') => {
             return (e: React.ChangeEvent<HTMLInputElement>) => {
                 e.preventDefault();
                 settingsControllers.setValue(k, e.target.value);
@@ -81,7 +81,7 @@ const Settings = () => {
     );
 
     return (
-        <div>
+        <div style={{ width: 'min(90%, 1024px)' }}>
             <h1>Settings</h1>
             <SettingsItem
                 title="Base endpoint for the Spotify Quiz server"
@@ -90,6 +90,14 @@ const Settings = () => {
                 handleChange={handleTextChange('serverUrl')}
                 handleReset={handleReset('serverUrl')}
                 isDefault={defaultSettings.serverUrl === settings.serverUrl}
+            />
+            <SettingsItem
+                title="Put a bypass token for the Spotify Quiz server here if you have one"
+                label="Rate Limit Bypass Token"
+                value={settings.rateLimitBypassToken ?? ''}
+                handleChange={handleTextChange('rateLimitBypassToken')}
+                handleReset={handleReset('rateLimitBypassToken')}
+                isDefault={defaultSettings.rateLimitBypassToken === settings.rateLimitBypassToken}
             />
             <SettingsItem
                 title="Application ID from Spotify developer dashboard"
@@ -102,10 +110,10 @@ const Settings = () => {
             <SettingsItem
                 title="Redirect to here after logging in"
                 label="Redirect URI"
-                value={settings.redirectURI}
-                handleChange={handleTextChange('redirectURI')}
-                handleReset={handleReset('redirectURI')}
-                isDefault={defaultSettings.redirectURI === settings.redirectURI}
+                value={settings.redirectUri}
+                handleChange={handleTextChange('redirectUri')}
+                handleReset={handleReset('redirectUri')}
+                isDefault={defaultSettings.redirectUri === settings.redirectUri}
             />
             <SettingsItem
                 title="Don't try to refresh tokens that expire in less than this many seconds"
@@ -138,9 +146,9 @@ const Settings = () => {
                         <button
                             onClick={(e) => {
                                 e.preventDefault();
-                                spotifyControllers.requestRefresh(spotify);
+                                spotifyControllers.requestRefresh(spotify.authData);
                             }}
-                            title={`Expires in ${Math.floor(getSecondsTillExpiry(spotify) / 60)} minutes`}
+                            title={`Expires in ${Math.floor(getSecondsTillExpiry(spotify.authData) / 60)} minutes`}
                             className="internalLink"
                         >
                             Refresh

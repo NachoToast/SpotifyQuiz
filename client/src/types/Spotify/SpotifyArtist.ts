@@ -9,7 +9,7 @@ export default interface SpotifyArtist {
 
     name: string;
 
-    type: `artist`;
+    type: 'artist';
 
     uri: string;
 }

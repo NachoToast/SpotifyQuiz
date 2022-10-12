@@ -1,14 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import SpotifyPlaylist from '../../../../shared/Spotify/SpotifyPlaylist';
-import { getAllPlaylistTracks } from '../../Providers/Spotify/SpotifyHelpers';
+import SpotifyPlaylist from '../../types/Spotify/SpotifyPlaylist';
 import './PlaylistSelector.css';
 
 export interface PlaylistSelectorProps {
     playlists: SpotifyPlaylist[] | null;
     accessToken: string;
+    onSubmit: (playlistId: string) => void;
 }
 
-const PlaylistSelector = ({ playlists, accessToken }: PlaylistSelectorProps) => {
+const PlaylistSelector = ({ playlists, accessToken, onSubmit }: PlaylistSelectorProps) => {
     const [selectedPlaylist, setSelectedPlaylist] = useState<number>(-1);
     const [directUrl, setDirectUrl] = useState('');
     const [feedback, setFeedback] = useState('');
@@ -62,23 +62,9 @@ const PlaylistSelector = ({ playlists, accessToken }: PlaylistSelectorProps) => 
                 playlistId = playlists[selectedPlaylist].id;
             } else return;
 
-            setFeedback('Loading tracks....');
-
-            const controller = new AbortController();
-
-            getAllPlaylistTracks(accessToken, playlistId, controller)
-                .then((e) => {
-                    console.log(e);
-                })
-                .catch((e) => {
-                    console.log(e);
-                });
-
-            return () => {
-                controller.abort();
-            };
+            onSubmit(playlistId);
         },
-        [accessToken, directUrl, playlists, selectedPlaylist],
+        [directUrl, onSubmit, playlists, selectedPlaylist],
     );
 
     return (
@@ -116,7 +102,7 @@ const PlaylistSelector = ({ playlists, accessToken }: PlaylistSelectorProps) => 
                     {feedback}
                 </span>
             )}
-            <input type="submit" onSubmit={handleSubmit} />
+            <input type="submit" disabled={directUrl === '' && selectedPlaylist === -1} onSubmit={handleSubmit} />
         </form>
     );
 };

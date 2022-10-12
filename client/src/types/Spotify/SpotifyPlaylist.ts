@@ -37,7 +37,7 @@ export default interface SpotifyPlaylist {
 
         id: string;
 
-        type: `user`;
+        type: 'user';
 
         uri: string;
     };
@@ -58,7 +58,7 @@ export default interface SpotifyPlaylist {
         total: number;
     };
 
-    type: `playlist`;
+    type: 'playlist';
 
     uri: string;
 }
