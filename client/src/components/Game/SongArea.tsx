@@ -87,7 +87,7 @@ const SongArea = ({ socket, gameState, me }: SongAreaProps) => {
         if (spotify.playlists === null) {
             return (
                 <div className="songArea">
-                    <p>Loading you Spotify playlists...</p>
+                    <p>Loading your Spotify playlists...</p>
                     <p style={{ color: 'gray', fontStyle: 'italic' }}>Please wait :)</p>
                 </div>
             );
