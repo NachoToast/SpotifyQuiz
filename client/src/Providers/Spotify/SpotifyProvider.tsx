@@ -68,7 +68,7 @@ const SpotifyContextProvider = ({ children }: { children: ReactNode }) => {
                             setAt: new Date().toISOString(),
                             refresh_token: e.data.refresh_token ?? currentData.refresh_token,
                         });
-                        events.emit('refreshed');
+                        events.emit('refreshed', e.data.access_token);
                         resolve(true);
                     } else {
                         logout();

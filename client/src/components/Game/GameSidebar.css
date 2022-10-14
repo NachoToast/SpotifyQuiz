@@ -1,0 +1,133 @@
+div.gameSidebar {
+    display: flex;
+    flex-flow: column nowrap;
+    min-width: 300px;
+    align-items: center;
+}
+
+div.gamePlayers {
+    flex-grow: 1;
+    width: 100%;
+    border-left: solid 1px gray;
+}
+
+div.gamePlayers > h3 {
+    margin: 0.5em 0;
+}
+
+div.gamePlayers table {
+    padding: 0 0.5em;
+    width: 100%;
+}
+
+div.gamePlayers th {
+    color: gray;
+    font-weight: normal;
+}
+
+div.gamePlayers th:nth-child(1) {
+    text-align: left;
+}
+
+div.gamePlayers th:nth-child(2) {
+    text-align: right;
+}
+
+div.gamePlayers td {
+    font-size: 18pt;
+    margin: 0;
+    padding: 0.3em 0;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+div.gamePlayers td:nth-child(1) {
+    text-align: left;
+}
+
+div.gamePlayers td:nth-child(2) {
+    text-align: right;
+}
+
+div.gameButtons {
+    border-top: solid 1px gray;
+    display: flex;
+    width: 100%;
+    border-left: solid 1px gray;
+}
+
+div.gameButtons > div {
+    width: 1px;
+    background-color: gray;
+}
+
+div.gameButtons > button {
+    background-color: inherit;
+    font: inherit;
+    color: inherit;
+    border: none;
+    padding: 0.4em;
+    font-size: calc(10px + 1vmin);
+    cursor: pointer;
+    transition: background-color 200ms linear;
+    flex-grow: 1;
+}
+
+.copyCodeButton:hover {
+    background-color: gray;
+}
+
+.quitGameButton:hover {
+    background-color: lightcoral;
+    border-color: white;
+}
+
+td.playerSpeechBubble {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translateX(calc(-100% - 0.2em));
+    background-color: gray;
+    color: black;
+    border-radius: 0.5em;
+    animation-fill-mode: both;
+    transition: background-color 200ms linear;
+}
+
+td.playerSpeechBubble > span {
+    padding: 0 0.2em;
+}
+
+td.playerSpeechBubble:not(td.playerSpeechBubble.idle) {
+    animation: speechFadeIn 200ms linear;
+}
+
+@keyframes speechFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+td.playerSpeechBubble.idle {
+    visibility: hidden;
+}
+
+td.playerSpeechBubble.guessing {
+    background-color: gray;
+}
+
+td.playerSpeechBubble.guessed {
+    background-color: gold;
+}
+
+td.playerSpeechBubble.correct {
+    background-color: lightgreen;
+}
+
+td.playerSpeechBubble.incorrect {
+    background-color: lightcoral;
+}

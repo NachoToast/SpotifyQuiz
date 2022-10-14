@@ -139,8 +139,6 @@ export async function createGame(serverUrl: string, rateLimitBypassToken: string
             headers: {},
         };
 
-        console.log('making request, baseURL =', config.baseURL);
-
         if (rateLimitBypassToken !== '') config.headers!['RateLimit-Bypass-Token'] = rateLimitBypassToken;
 
         const { data } = await axios.post<string>(`${serverUrl}/game`, config);

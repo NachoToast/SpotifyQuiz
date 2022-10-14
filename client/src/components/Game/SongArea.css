@@ -1,0 +1,66 @@
+div.songArea {
+    flex-grow: 1;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+    border-bottom: solid 1px gray;
+    position: relative;
+}
+
+.startGameButton {
+    opacity: 0;
+    animation: startButtonFadeIn 200ms linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes startButtonFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+div.songArea.active {
+    justify-content: flex-start;
+    padding: 0.2em 0;
+}
+
+.guessOutput {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    margin-left: 0.3em;
+    border-radius: 0.1em;
+}
+
+.guessOutput.idle::before {
+    content: '🤔';
+    visibility: hidden;
+}
+
+.guessOutput.guessing::before {
+    content: '🤔';
+}
+
+.guessOutput.guessed::before {
+    content: '😎';
+}
+
+.guessOutput.correct::before {
+    content: '✅';
+}
+
+.guessOutput.wrong::before {
+    content: '❌';
+}
+
+span.songNumberInfo {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 0.1em 0.2em;
+    color: gray;
+}

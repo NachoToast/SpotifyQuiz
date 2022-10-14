@@ -1,10 +1,11 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import GameUser from '../../../../shared/GameUser';
+import GamePlayer from '../../../../shared/GamePlayer';
+import { GameStates } from '../../../../shared/GameStates';
 import { ServerToClientEvents, ClientToServerEvents } from '../../../../shared/SocketEvents';
 import { api } from '../../api';
 import { SettingsContext, SpotifyContext } from '../../Contexts';
-import Game, { GameProps } from '../Game';
+import Game from '../Game';
 import ExternalLink from '../Links/ExternalLink';
 
 const usernameValidation = new RegExp(/^([a-zA-Z0-9]| ){2,20}$/);
@@ -43,7 +44,11 @@ const Home = () => {
 
     const [customMainText, setCustomMainText] = useState<[string, string | undefined] | null>(null);
 
-    const [gameInfo, setGameInfo] = useState<Pick<GameProps, 'socket' | 'existingUsers'> | null>(null);
+    const [intialGameData, setInitialGameData] = useState<{
+        gameState: GameStates;
+        players: GamePlayer[];
+        socket: Socket<ServerToClientEvents, ClientToServerEvents>;
+    } | null>(null);
 
     const usernameStatus = useMemo(() => {
         if (username === '') return 'Missing username';
@@ -66,7 +71,7 @@ const Home = () => {
                 auth: { username, gameCode },
             });
 
-            new Promise<GameUser[]>((resolve, reject) => {
+            new Promise<{ gameState: GameStates; players: GamePlayer[] }>((resolve, reject) => {
                 socket.once('connect_error', () => {
                     setCustomMainText(['Game not found', 'lightcoral']);
                     reject();
@@ -97,16 +102,15 @@ const Home = () => {
                     setCustomMainText([newMainText, 'lightcoral']);
                     reject();
                 });
-                socket.once('welcomeToGame', (e) => {
-                    console.log('welcomed');
-                    resolve(e);
+                socket.once('welcomeToGame', (gameState, players) => {
+                    resolve({ gameState, players });
                 });
             })
-                .then((existingUsers) => {
+                .then(({ gameState, players }) => {
                     socket.off('connect_error');
                     socket.off('disconnect');
                     socket.off('setNameFailed');
-                    setGameInfo({ socket, existingUsers });
+                    setInitialGameData({ socket, gameState, players });
                 })
                 .catch(() => {
                     socket.off();
@@ -136,23 +140,20 @@ const Home = () => {
     );
 
     useEffect(() => {
-        if (gameInfo === null) return;
+        if (intialGameData === null) return;
 
-        console.log('connected!');
-
-        const handleDisconnect = (reason: Socket.DisconnectReason) => {
-            console.log(`Disconnected with reason: ${reason}`);
-            gameInfo.socket.off();
+        const handleDisconnect = (_reason: Socket.DisconnectReason) => {
+            intialGameData.socket.off();
             setCustomMainText(['Disconnected', 'lightcoral']);
-            setGameInfo(null);
+            setInitialGameData(null);
         };
 
-        gameInfo.socket.once('disconnect', handleDisconnect);
+        intialGameData.socket.once('disconnect', handleDisconnect);
 
         return () => {
-            gameInfo.socket.off('disconnect', handleDisconnect);
+            intialGameData.socket.off('disconnect', handleDisconnect);
         };
-    }, [gameInfo]);
+    }, [intialGameData]);
 
     const [mainText, mainTextColour] = useMemo(() => {
         if (customMainText !== null) {
@@ -164,7 +165,7 @@ const Home = () => {
         return ['How well do you know your Spotify playlists?', undefined];
     }, [customMainText, isCreateMode, spotify]);
 
-    if (gameInfo !== null) return <Game {...gameInfo} gameCode={gameCode} username={username} />;
+    if (intialGameData !== null) return <Game {...intialGameData} gameCode={gameCode} username={username} />;
 
     return (
         <div style={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'center' }}>

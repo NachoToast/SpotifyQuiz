@@ -1,6 +1,6 @@
 import SpotifyAlbum from './SpotifyAlbum';
 import SpotifyArtist from './SpotifyArtist';
-import SpotifyExternalURLs from './SpotifyExternalURLs';
+import SpotifyExternalURLs from './SpotifyExternalURL';
 import SpotifyImage from './SpotifyImage';
 import SpotifyPlaylist from './SpotifyPlaylist';
 import SpotifyPlaylists from './SpotifyPlaylists';

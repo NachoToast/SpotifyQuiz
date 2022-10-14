@@ -1,4 +1,4 @@
-import SpotifyExternalURLs from './SpotifyExternalURLs';
+import SpotifyExternalURLs from './SpotifyExternalURL';
 import SpotifyImage from './SpotifyImage';
 
 /**{@link https://developer.spotify.com/documentation/web-api/reference/#/operations/get-playlist API Reference} */

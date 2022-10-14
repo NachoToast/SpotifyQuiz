@@ -1,6 +1,5 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
-import SpotifyPlaylist from '../../types/Spotify/SpotifyPlaylist';
-import SpotifyUser from '../../types/Spotify/SpotifyUser';
+import { SpotifyPlaylist, SpotifyUser } from '../../../../shared/Spotify';
 import { SpotifyLoginToken } from '../../../../shared/SpotifyTokens';
 import ServerErrorResponse from '../../types/ServerErrorResponse';
 
@@ -24,7 +23,7 @@ export interface SpotifyControllers {
 export interface SpotifyEvents {
     loggedIn: (user: SpotifyUser) => void;
     loggedOut: () => void;
-    refreshed: () => void;
+    refreshed: (newToken: string) => void;
 }
 
 export interface ISpotifyContext {

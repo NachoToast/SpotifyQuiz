@@ -1,14 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import SpotifyPlaylist from '../../types/Spotify/SpotifyPlaylist';
+import { SpotifyPlaylist } from '../../../../shared/Spotify';
 import './PlaylistSelector.css';
 
 export interface PlaylistSelectorProps {
     playlists: SpotifyPlaylist[] | null;
-    accessToken: string;
     onSubmit: (playlistId: string) => void;
+    disabled: boolean;
 }
 
-const PlaylistSelector = ({ playlists, accessToken, onSubmit }: PlaylistSelectorProps) => {
+const PlaylistSelector = ({ playlists, onSubmit, disabled }: PlaylistSelectorProps) => {
     const [selectedPlaylist, setSelectedPlaylist] = useState<number>(-1);
     const [directUrl, setDirectUrl] = useState('');
     const [feedback, setFeedback] = useState('');
@@ -35,6 +35,7 @@ const PlaylistSelector = ({ playlists, accessToken, onSubmit }: PlaylistSelector
     const handleSubmit = useCallback(
         (e: React.FormEvent<HTMLFormElement | HTMLInputElement>) => {
             e.preventDefault();
+            if (disabled) return;
             setFeedback('');
 
             let playlistId: string;
@@ -64,7 +65,7 @@ const PlaylistSelector = ({ playlists, accessToken, onSubmit }: PlaylistSelector
 
             onSubmit(playlistId);
         },
-        [directUrl, onSubmit, playlists, selectedPlaylist],
+        [directUrl, disabled, onSubmit, playlists, selectedPlaylist],
     );
 
     return (
@@ -75,7 +76,12 @@ const PlaylistSelector = ({ playlists, accessToken, onSubmit }: PlaylistSelector
                     <p style={{ color: 'gray', textAlign: 'center' }}>Loading your playlists...</p>
                 ) : (
                     <>
-                        <select name="playlistDropdown" value={selectedPlaylist} onChange={handlePlaylistChange}>
+                        <select
+                            name="playlistDropdown"
+                            value={selectedPlaylist}
+                            onChange={handlePlaylistChange}
+                            disabled={disabled}
+                        >
                             <option value={-1} disabled hidden></option>
                             {playlists.map((e, i) => (
                                 <option key={e.id} value={i}>
@@ -96,13 +102,23 @@ const PlaylistSelector = ({ playlists, accessToken, onSubmit }: PlaylistSelector
                 )}
             </div>
             <label htmlFor="playlistDirect">Or enter a URL</label>
-            <input type="text" name="playlistDirect" value={directUrl} onChange={handleDirectUrlChange} />
+            <input
+                type="text"
+                name="playlistDirect"
+                value={directUrl}
+                onChange={handleDirectUrlChange}
+                readOnly={disabled}
+            />
             {feedback !== '' && (
                 <span style={{ color: 'lightcoral', textAlign: 'center', marginTop: '1em', marginBottom: '-2em' }}>
                     {feedback}
                 </span>
             )}
-            <input type="submit" disabled={directUrl === '' && selectedPlaylist === -1} onSubmit={handleSubmit} />
+            <input
+                type="submit"
+                disabled={disabled || (directUrl === '' && selectedPlaylist === -1)}
+                onSubmit={handleSubmit}
+            />
         </form>
     );
 };

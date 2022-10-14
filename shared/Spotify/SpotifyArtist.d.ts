@@ -1,4 +1,4 @@
-import SpotifyExternalURLs from './SpotifyExternalURLs';
+import SpotifyExternalURLs from './SpotifyExternalURL';
 
 export default interface SpotifyArtist {
     external_urls: SpotifyExternalURLs;

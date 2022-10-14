@@ -1,4 +1,4 @@
-import SpotifyExternalURLs from './SpotifyExternalURLs';
+import SpotifyExternalURLs from './SpotifyExternalURL';
 import SpotifyImage from './SpotifyImage';
 
 /**

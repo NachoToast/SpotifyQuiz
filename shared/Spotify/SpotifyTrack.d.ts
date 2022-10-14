@@ -1,6 +1,6 @@
 import SpotifyAlbum from './SpotifyAlbum';
 import SpotifyArtist from './SpotifyArtist';
-import SpotifyExternalURLs from './SpotifyExternalURLs';
+import SpotifyExternalURLs from './SpotifyExternalURL';
 
 export default interface SpotifyTrack {
     album: SpotifyAlbum;

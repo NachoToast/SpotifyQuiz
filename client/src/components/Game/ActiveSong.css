@@ -1,0 +1,53 @@
+.activeSongContainer {
+    position: relative;
+    width: 90%;
+    height: 80%;
+}
+.activeSong {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border: none;
+    border-radius: 0.5em;
+}
+
+.activeSong.hidden {
+    pointer-events: none;
+    filter: brightness(0%);
+}
+
+.correctSong {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: solid 3px gray;
+    border-radius: 0.5em;
+    opacity: 0;
+    animation: correctFadeIn 200ms linear forwards;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.correctSong img {
+    height: 50%;
+    padding: 0.5em;
+}
+
+.correctSong > .correctSongInfo {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 0.5em;
+    border-radius: 0.5em;
+}
+
+@keyframes correctFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
