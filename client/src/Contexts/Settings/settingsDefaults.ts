@@ -6,7 +6,7 @@ export const defaultSettings: Settings = {
             ? 'http://localhost:3001'
             : window.location.host === 'ntgc.ddns.net:3000'
             ? 'http://ntgc.ddns.net:3001'
-            : 'production server not yet implemented',
+            : 'https://spq.nachotoast.com',
     rateLimitBypassToken: '',
     spotifyClientId: '7fa87b67fc974969abb02a43bc7d0f60',
     redirectUri: window.location.origin + '/login',
