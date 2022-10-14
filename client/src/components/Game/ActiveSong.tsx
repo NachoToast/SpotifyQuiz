@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import GamePlayer from '../../../../shared/GamePlayer';
 import { ActiveGameState, CooldownGameState } from '../../../../shared/GameStates';
 import './ActiveSong.css';
 
 const ActiveSong = ({ state, me }: { state: ActiveGameState | CooldownGameState; me: GamePlayer }) => {
-    const [trueStart] = useState(() => {
+    const trueStart = useMemo(() => {
         const playbackStartedSecondsAgo = Math.floor((Date.now() - new Date(state.startedAt).getTime()) / 1000);
+
+        console.log(state.startAt, playbackStartedSecondsAgo, state.startAt + playbackStartedSecondsAgo);
         return state.startAt + playbackStartedSecondsAgo;
-    });
+    }, [state.startAt, state.startedAt]);
 
     return (
         <div className="activeSongContainer">
