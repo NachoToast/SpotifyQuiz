@@ -1,0 +1,20 @@
+name: Deploy
+
+on:
+  release:
+    types:
+      - "released"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: executing remote build process
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: ./services/scripts/spotifyQuiz.sh
