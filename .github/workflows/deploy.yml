@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: executing remote build process
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
