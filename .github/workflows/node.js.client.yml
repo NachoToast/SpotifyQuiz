@@ -3,15 +3,7 @@
 
 name: Node.js CI (Client)
 
-on:
-  push:
-    paths:
-      - client/**
-      - shared/**
-  pull_request:
-    paths:
-      - client/**
-      - shared/**
+on: [push, pull_request]
 
 defaults:
   run:
