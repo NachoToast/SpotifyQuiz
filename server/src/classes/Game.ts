@@ -265,13 +265,21 @@ export default class Game {
 
         const trackName = track.name.toLowerCase();
         const videoName = video?.title?.toLowerCase();
+        const acceptedGuesses = trackName.split(" ");
 
         const isCorrect = (playerGuess: string) => {
             playerGuess = playerGuess.toLowerCase();
             if (playerGuess === trackName) return true;
             if (playerGuess === videoName) return true;
             if (playerGuess.length > 3 && trackName.startsWith(playerGuess)) return true;
-
+            if (playerGuess.length > 5) {
+                for (const acceptedGuess of acceptedGuesses) {
+                    if (acceptedGuess === playerGuess) {
+                        return true;
+                    }
+                }
+            }
+            
             return false;
         };
 

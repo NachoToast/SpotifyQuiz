@@ -10,7 +10,7 @@ const ActiveSong = ({ state, me }: { state: ActiveGameState | CooldownGameState;
         console.log(state.startAt, playbackStartedSecondsAgo, state.startAt + playbackStartedSecondsAgo);
         return state.startAt + playbackStartedSecondsAgo;
     }, [state.startAt, state.startedAt]);
-
+    
     return (
         <div className="activeSongContainer">
             <iframe
