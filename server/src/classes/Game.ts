@@ -265,7 +265,7 @@ export default class Game {
 
         const trackName = track.name.toLowerCase();
         const videoName = video?.title?.toLowerCase();
-        const acceptedGuesses = trackName.split(" ");
+        const acceptedGuesses = trackName.split(' ');
 
         const isCorrect = (playerGuess: string) => {
             playerGuess = playerGuess.toLowerCase();
